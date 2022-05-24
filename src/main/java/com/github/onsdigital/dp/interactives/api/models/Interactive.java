@@ -2,6 +2,7 @@ package com.github.onsdigital.dp.interactives.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Interactive {
@@ -18,6 +19,10 @@ public class Interactive {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private InteractiveArchive archive;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("url")
+    private String URL;
+
     public void setMetadata(InteractiveMetadata x) {
         this.metadata = x;
     }
@@ -30,6 +35,7 @@ public class Interactive {
     public void setPublished(boolean x) {
         this.published = x;
     }
+    public void setURL(String URL) { this.URL = URL; }
 
     public InteractiveMetadata getMetadata() {
         return this.metadata;
@@ -43,4 +49,5 @@ public class Interactive {
     public boolean getPublished() {
         return this.published;
     }
+    public String getURL() { return URL; }
 }

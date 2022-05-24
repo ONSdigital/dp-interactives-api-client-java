@@ -2,6 +2,7 @@ package com.github.onsdigital.dp.interactives.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InteractiveFile {
@@ -13,7 +14,8 @@ public class InteractiveFile {
     private String mimetype;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private String size_in_bytes;
+    @JsonProperty("size_in_bytes")
+    private String sizeInBytes;
 
     public void setName(String x) {
         this.name = x;
@@ -21,8 +23,8 @@ public class InteractiveFile {
     public void setMimetype(String x) {
         this.mimetype = x;
     }
-    public void setSize_in_bytes(String x) {
-        this.size_in_bytes = x;
+    public void setSizeInBytes(String x) {
+        this.sizeInBytes = x;
     }
 
     public String getName() {
@@ -31,7 +33,7 @@ public class InteractiveFile {
     public String getMimetype() {
         return this.mimetype;
     }
-    public String getSize_in_bytes() {
-        return this.size_in_bytes;
+    public String getSizeInBytes() {
+        return this.sizeInBytes;
     }
 }

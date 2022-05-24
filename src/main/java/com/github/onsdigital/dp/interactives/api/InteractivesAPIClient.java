@@ -22,14 +22,14 @@ import org.apache.http.entity.StringEntity;
 
 import java.io.UnsupportedEncodingException;
 
-public class APIClient implements Client {
+public class InteractivesAPIClient implements Client {
     private String hostname;
     private String authToken;
     private CloseableHttpClient httpClient;
     private static final String FILTER_PARAM = "filter";
     private static final ObjectMapper json = new ObjectMapper();
 
-    public APIClient(String hostname, String authToken) {
+    public InteractivesAPIClient(String hostname, String authToken) {
         this.hostname = hostname;
         this.authToken = authToken;
         httpClient = HttpClients.createDefault();
@@ -120,7 +120,7 @@ public class APIClient implements Client {
 
             // set filter
             InteractiveMetadata md = new InteractiveMetadata();
-            md.setCollection_id(collectionId);
+            md.setCollectionId(collectionId);
             InteractiveFilter filter = new InteractiveFilter();
             filter.setMetadata(md);
 
@@ -208,7 +208,7 @@ public class APIClient implements Client {
             request.addHeader("Authorization", "Bearer " + authToken);
 
             InteractiveMetadata md = new InteractiveMetadata();
-            md.setCollection_id(collectionId);
+            md.setCollectionId(collectionId);
             Interactive interactive = new Interactive();
             interactive.setMetadata(md);
             PatchRequest pr = new PatchRequest();

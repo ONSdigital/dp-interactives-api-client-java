@@ -8,7 +8,7 @@ Add this to your dependencies in pom.xml:
 ```xml
     <dependency>
 	    <groupId>com.github.onsdigital</groupId>
-	    <artifactId>dp-interactives-api</artifactId>
+	    <artifactId>dp-interactives-api-client-java</artifactId>
 	    <version>Tag</version>
 	</dependency>
 ```

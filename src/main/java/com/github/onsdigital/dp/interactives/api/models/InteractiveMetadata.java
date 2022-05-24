@@ -2,6 +2,7 @@ package com.github.onsdigital.dp.interactives.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InteractiveMetadata {
@@ -13,16 +14,18 @@ public class InteractiveMetadata {
     private String label;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private String internal_id;
+    private String internalId;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private String collection_id;
+    @JsonProperty("collection_id")
+    private String collectionId;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String slug;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private String resource_id;
+    @JsonProperty("resource_id")
+    private String resourceId;
 
     public void setTitle(String x) {
         this.title = x;
@@ -30,17 +33,17 @@ public class InteractiveMetadata {
     public void setLabel(String x) {
         this.label = x;
     }
-    public void setInternal_id(String x) {
-        this.internal_id = x;
+    public void setInternalId(String x) {
+        this.internalId = x;
     }
-    public void setCollection_id(String x) {
-        this.collection_id = x;
+    public void setCollectionId(String x) {
+        this.collectionId = x;
     }
     public void setSlug(String x) {
         this.slug = x;
     }
-    public void setResource_id(String x) {
-        this.resource_id = x;
+    public void setResourceId(String x) {
+        this.resourceId = x;
     }
 
     public String getTitle() {
@@ -49,16 +52,16 @@ public class InteractiveMetadata {
     public String getLabel() {
         return this.label;
     }
-    public String getInternal_id() {
-        return this.internal_id;
+    public String getInternalId() {
+        return this.internalId;
     }
-    public String getCollection_id() {
-        return this.collection_id;
+    public String getCollectionId() {
+        return this.collectionId;
     }
     public String getSlug() {
         return this.slug;
     }
-    public String getResource_id() {
-        return this.resource_id;
+    public String getResourceId() {
+        return this.resourceId;
     }
 }

@@ -1,5 +1,11 @@
 package com.github.onsdigital.dp.interactives.api;
 
+import com.github.onsdigital.dp.interactives.api.exceptions.ConnectionException;
+import com.github.onsdigital.dp.interactives.api.exceptions.InteractiveInvalidStateException;
+import com.github.onsdigital.dp.interactives.api.exceptions.NoInteractivesInCollectionException;
+import com.github.onsdigital.dp.interactives.api.exceptions.ServerErrorException;
+import com.github.onsdigital.dp.interactives.api.exceptions.UnauthorizedException;
+import com.github.onsdigital.dp.interactives.api.exceptions.UnexpectedResponseException;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -12,11 +18,12 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import com.github.onsdigital.dp.interactives.api.exceptions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class APIClientTest {
+class InteractivesAPIClientTest {
     public static final String COLLECTION_ID  = "collection-id";
     public static final String INTERACTIVE_ID = "interactive-id";
     public static final String TOKEN = "AUTHENTICATION-TOKEN";
@@ -28,7 +35,7 @@ class APIClientTest {
 
             HttpUrl url = server.url("");
 
-            Client client = new APIClient(url.toString(), TOKEN);
+            Client client = new InteractivesAPIClient(url.toString(), TOKEN);
 
             try {
                 client.publishCollection(COLLECTION_ID);
@@ -51,7 +58,7 @@ class APIClientTest {
 
             HttpUrl url = server.url("");
 
-            APIClient client = new APIClient(url.toString(), TOKEN);
+            InteractivesAPIClient client = new InteractivesAPIClient(url.toString(), TOKEN);
 
             assertThrows(NoInteractivesInCollectionException.class, () -> {
                 client.publishCollection(COLLECTION_ID);
@@ -69,7 +76,7 @@ class APIClientTest {
 
             HttpUrl url = server.url("");
 
-            APIClient client = new APIClient(url.toString(), TOKEN);
+            InteractivesAPIClient client = new InteractivesAPIClient(url.toString(), TOKEN);
 
             assertThrows(InteractiveInvalidStateException.class, () -> {
                 client.publishCollection(COLLECTION_ID);
@@ -87,7 +94,7 @@ class APIClientTest {
 
             HttpUrl url = server.url("");
 
-            APIClient client = new APIClient(url.toString(), TOKEN);
+            InteractivesAPIClient client = new InteractivesAPIClient(url.toString(), TOKEN);
 
             assertThrows(UnauthorizedException.class, () -> {
                 client.publishCollection(COLLECTION_ID);
@@ -106,7 +113,7 @@ class APIClientTest {
 
             HttpUrl url = server.url("");
 
-            APIClient client = new APIClient(url.toString(), TOKEN);
+            InteractivesAPIClient client = new InteractivesAPIClient(url.toString(), TOKEN);
 
             Exception e = assertThrows(ServerErrorException.class, () -> {
                 client.publishCollection(COLLECTION_ID);
@@ -127,7 +134,7 @@ class APIClientTest {
 
             HttpUrl url = server.url("");
 
-            APIClient client = new APIClient(url.toString(), TOKEN);
+            InteractivesAPIClient client = new InteractivesAPIClient(url.toString(), TOKEN);
 
             Exception e = assertThrows(UnexpectedResponseException.class, () -> {
                 client.publishCollection(COLLECTION_ID);
@@ -142,7 +149,7 @@ class APIClientTest {
 
     @Test
     void handingInvalidHostnameProvided() {
-        APIClient client = new APIClient("NOT A VALID HOSTNAME", TOKEN);
+        InteractivesAPIClient client = new InteractivesAPIClient("NOT A VALID HOSTNAME", TOKEN);
 
         Exception e = assertThrows(ConnectionException.class, () -> {
             client.publishCollection(COLLECTION_ID);
@@ -153,7 +160,7 @@ class APIClientTest {
 
     @Test
     void handingIncorrectHostnameProvided() {
-        APIClient client = new APIClient("http://localhost:123456789", TOKEN);
+        InteractivesAPIClient client = new InteractivesAPIClient("http://localhost:123456789", TOKEN);
 
         Exception e = assertThrows(ConnectionException.class, () -> {
             client.publishCollection(COLLECTION_ID);
