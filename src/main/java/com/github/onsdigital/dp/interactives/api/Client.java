@@ -24,4 +24,19 @@ public interface Client {
      * @param interactiveId
      */
     Interactive getInteractive(String interactiveId);
+
+    /**
+     * Get interactive (given the id)
+     *
+     * @param interactiveId
+     * @param collectionId
+     */
+    void linkInteractiveToCollection(String interactiveId, String collectionId);
+
+    /**
+     * Delete interactive (given the id)
+     *
+     * @param interactiveId
+     */
+    void deleteInteractive(String interactiveId);
 }

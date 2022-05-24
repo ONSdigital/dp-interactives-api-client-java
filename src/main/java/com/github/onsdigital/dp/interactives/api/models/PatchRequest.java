@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class PatchRequest {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private String attribute = "Publish";
+    private String attribute = "LinkToCollection";
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Interactive interactive;
