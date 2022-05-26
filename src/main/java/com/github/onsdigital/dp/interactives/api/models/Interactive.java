@@ -23,6 +23,10 @@ public class Interactive {
     @JsonProperty("url")
     private String URL;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("uri")
+    private String URI;
+
     public void setMetadata(InteractiveMetadata x) {
         this.metadata = x;
     }
@@ -36,6 +40,7 @@ public class Interactive {
         this.published = x;
     }
     public void setURL(String URL) { this.URL = URL; }
+    public void setURI(String URI) { this.URI = URI; }
 
     public InteractiveMetadata getMetadata() {
         return this.metadata;
@@ -50,4 +55,5 @@ public class Interactive {
         return this.published;
     }
     public String getURL() { return URL; }
+    public String getURI() { return URI; }
 }
