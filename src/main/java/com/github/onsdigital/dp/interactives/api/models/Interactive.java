@@ -27,6 +27,10 @@ public class Interactive {
     @JsonProperty("uri")
     private String URI;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("html_files")
+    private InteractiveHTMLFile[] htmlFiles;
+
     public void setMetadata(InteractiveMetadata x) {
         this.metadata = x;
     }
@@ -41,6 +45,7 @@ public class Interactive {
     }
     public void setURL(String URL) { this.URL = URL; }
     public void setURI(String URI) { this.URI = URI; }
+    public void setHTMLFiles(InteractiveHTMLFile[] htmlFiles) { this.htmlFiles = htmlFiles; }
 
     public InteractiveMetadata getMetadata() {
         return this.metadata;
@@ -56,4 +61,5 @@ public class Interactive {
     }
     public String getURL() { return URL; }
     public String getURI() { return URI; }
+    public InteractiveHTMLFile[] getHTMLFiles() { return htmlFiles; }
 }
