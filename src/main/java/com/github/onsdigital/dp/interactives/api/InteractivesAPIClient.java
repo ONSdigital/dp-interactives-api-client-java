@@ -23,9 +23,9 @@ import org.apache.http.entity.StringEntity;
 import java.io.UnsupportedEncodingException;
 
 public class InteractivesAPIClient implements Client {
-    private String hostname;
-    private String authToken;
-    private CloseableHttpClient httpClient;
+    private final String hostname;
+    private final String authToken;
+    private final CloseableHttpClient httpClient;
     private static final String FILTER_PARAM = "filter";
     private static final ObjectMapper json = new ObjectMapper();
 
@@ -37,33 +37,25 @@ public class InteractivesAPIClient implements Client {
 
     @Override
     public void deleteInteractive(String interactiveId) {
-        CloseableHttpResponse httpResponse;
         String uri = "/v1/interactives/" + interactiveId;
-        try {
-            HttpDelete request = new HttpDelete(hostname + uri);
-            request.addHeader("Authorization", "Bearer " + authToken);
+        HttpDelete request = new HttpDelete(hostname + uri);
+        request.addHeader("Authorization", "Bearer " + authToken);
 
-            httpResponse = httpClient.execute(request);
+        String body;
+        int statusCode;
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            statusCode = response.getStatusLine().getStatusCode();
+            body = EntityUtils.toString(response.getEntity());
         } catch (Exception e) {
             throw new ConnectionException("error talking to interactives api", e);
         }
 
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
-        if (statusCode == HttpStatus.SC_OK) {
-            return;
-        }
-
-        String body;
-        try {
-            body = EntityUtils.toString(httpResponse.getEntity());
-        } catch (Exception e) {
-            body = "ERROR GETTING BODY FROM RESPONSE OBJECT";
-        }
-
         switch (statusCode) {
+            case HttpStatus.SC_OK:
+                return; //all good
             case HttpStatus.SC_NOT_FOUND:
                 throw new NoInteractivesInCollectionException("No interactives found with id: " + interactiveId);
-          case HttpStatus.SC_FORBIDDEN:
+            case HttpStatus.SC_FORBIDDEN:
                 throw new UnauthorizedException("You are not authorized to delete interactives");
             case HttpStatus.SC_INTERNAL_SERVER_ERROR:
                 throw new ServerErrorException("Server error returned from interactives api: " + body);
@@ -74,28 +66,20 @@ public class InteractivesAPIClient implements Client {
 
     @Override
     public Interactive getInteractive(String interactiveId) {
-        CloseableHttpResponse httpResponse;
         String uri = "/v1/interactives/" + interactiveId;
-        try {
-            HttpGet request = new HttpGet(hostname + uri);
-            request.addHeader("Authorization", "Bearer " + authToken);
-
-            httpResponse = httpClient.execute(request);
-        } catch (Exception e) {
-            throw new ConnectionException("error talking to interactives api", e);
-        }
-
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        HttpGet request = new HttpGet(hostname + uri);
+        request.addHeader("Authorization", "Bearer " + authToken);
 
         String body;
-        try {
-            body = EntityUtils.toString(httpResponse.getEntity());
-            Interactive ixs = json.readValue(body, Interactive.class);
+        int statusCode;
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            statusCode = response.getStatusLine().getStatusCode();
+            body = EntityUtils.toString(response.getEntity());
             if (statusCode == HttpStatus.SC_OK) {
-                return ixs;
+                return json.readValue(body, Interactive.class);
             }
         } catch (Exception e) {
-            body = "ERROR GETTING BODY FROM RESPONSE OBJECT";
+            throw new ConnectionException("error talking to interactives api", e);
         }
 
         switch (statusCode) {
@@ -112,12 +96,10 @@ public class InteractivesAPIClient implements Client {
 
     @Override
     public Interactive[] getInteractivesInCollection(String collectionId) {
-        CloseableHttpResponse httpResponse;
         String uri = "/v1/interactives";
+        HttpGet request = new HttpGet(hostname + uri);
+        request.addHeader("Authorization", "Bearer " + authToken);
         try {
-            HttpGet request = new HttpGet(hostname + uri);
-            request.addHeader("Authorization", "Bearer " + authToken);
-
             // set filter
             InteractiveMetadata md = new InteractiveMetadata();
             md.setCollectionId(collectionId);
@@ -125,25 +107,22 @@ public class InteractivesAPIClient implements Client {
             filter.setMetadata(md);
 
             request.setURI(new URIBuilder(request.getURI())
-            .addParameter(FILTER_PARAM, jsonSerialise(filter))
-            .build());
-
-            httpResponse = httpClient.execute(request);
+                    .addParameter(FILTER_PARAM, jsonSerialise(filter))
+                    .build());
         } catch (Exception e) {
-            throw new ConnectionException("error talking to interactives api", e);
+            throw new ConnectionException("cannot create well-formed request", e);
         }
 
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
-
         String body;
-        try {
-            body = EntityUtils.toString(httpResponse.getEntity());
-            Interactive[] ixs = json.readValue(body, Interactive[].class);
+        int statusCode;
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            statusCode = response.getStatusLine().getStatusCode();
+            body = EntityUtils.toString(response.getEntity());
             if (statusCode == HttpStatus.SC_OK) {
-                return ixs;
+                return json.readValue(body, Interactive[].class);
             }
         } catch (Exception e) {
-            body = "ERROR GETTING BODY FROM RESPONSE OBJECT";
+            throw new ConnectionException("error talking to interactives api", e);
         }
 
         switch (statusCode) {
@@ -162,30 +141,22 @@ public class InteractivesAPIClient implements Client {
 
     @Override
     public void publishCollection(String collectionId) {
-        CloseableHttpResponse httpResponse;
         String uri = "/v1/collection/" + collectionId;
-        try {
-            HttpPatch request = new HttpPatch(hostname + uri);
-            request.addHeader("Authorization", "Bearer " + authToken);
+        HttpPatch request = new HttpPatch(hostname + uri);
+        request.addHeader("Authorization", "Bearer " + authToken);
 
-            httpResponse = httpClient.execute(request);
+        String body;
+        int statusCode;
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            statusCode = response.getStatusLine().getStatusCode();
+            body = EntityUtils.toString(response.getEntity());
         } catch (Exception e) {
             throw new ConnectionException("error talking to interactives api", e);
         }
 
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
-        if (statusCode == HttpStatus.SC_OK) {
-            return;
-        }
-
-        String body;
-        try {
-            body = EntityUtils.toString(httpResponse.getEntity());
-        } catch (Exception e) {
-            body = "ERROR GETTING BODY FROM RESPONSE OBJECT";
-        }
-
         switch (statusCode) {
+            case HttpStatus.SC_OK:
+                return; //all good
             case HttpStatus.SC_NOT_FOUND:
                 throw new NoInteractivesInCollectionException("No interactives found in collection: " + collectionId);
             case HttpStatus.SC_CONFLICT:
@@ -201,41 +172,36 @@ public class InteractivesAPIClient implements Client {
 
     @Override
     public void linkInteractiveToCollection(String interactiveId, String collectionId) {
-        CloseableHttpResponse httpResponse;
         String uri = "/v1/interactives/" + interactiveId;
+        HttpPatch request = new HttpPatch(hostname + uri);
+        request.addHeader("Authorization", "Bearer " + authToken);
         try {
-            HttpPatch request = new HttpPatch(hostname + uri);
-            request.addHeader("Authorization", "Bearer " + authToken);
-
             InteractiveMetadata md = new InteractiveMetadata();
             md.setCollectionId(collectionId);
             Interactive interactive = new Interactive();
             interactive.setMetadata(md);
             PatchRequest pr = new PatchRequest();
             pr.setInteractive(interactive);
-            addBody(pr, request); 
-            
-            httpResponse = httpClient.execute(request);
+            addBody(pr, request);
+        } catch (Exception e) {
+            throw new ConnectionException("cannot create well-formed request", e);
+        }
+
+        String body;
+        int statusCode;
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            statusCode = response.getStatusLine().getStatusCode();
+            body = EntityUtils.toString(response.getEntity());
         } catch (Exception e) {
             throw new ConnectionException("error talking to interactives api", e);
         }
 
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
-        if (statusCode == HttpStatus.SC_OK) {
-            return;
-        }
-
-        String body;
-        try {
-            body = EntityUtils.toString(httpResponse.getEntity());
-        } catch (Exception e) {
-            body = "ERROR GETTING BODY FROM RESPONSE OBJECT";
-        }
-
         switch (statusCode) {
+            case HttpStatus.SC_OK:
+                return; //all good
             case HttpStatus.SC_NOT_FOUND:
                 throw new NoInteractivesInCollectionException("No interactives found with id: " + interactiveId);
-          case HttpStatus.SC_FORBIDDEN:
+            case HttpStatus.SC_FORBIDDEN:
                 throw new UnauthorizedException("You are not authorized to delete interactives");
             case HttpStatus.SC_INTERNAL_SERVER_ERROR:
                 throw new ServerErrorException("Server error returned from interactives api: " + body);
@@ -244,13 +210,11 @@ public class InteractivesAPIClient implements Client {
         }
     }
 
-    private String jsonSerialise(Object object) throws JsonProcessingException, UnsupportedEncodingException {
-        String body = json.writeValueAsString(object);
-        return body;
+    private String jsonSerialise(Object object) throws JsonProcessingException {
+        return json.writeValueAsString(object);
     }
 
     private void addBody(Object object, HttpEntityEnclosingRequestBase httpRequest) throws JsonProcessingException, UnsupportedEncodingException {
-
         String body = json.writeValueAsString(object);
         StringEntity stringEntity = new StringEntity(body);
         httpRequest.setEntity(stringEntity);
