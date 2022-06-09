@@ -41,11 +41,9 @@ public class InteractivesAPIClient implements Client {
         HttpDelete request = new HttpDelete(hostname + uri);
         request.addHeader("Authorization", "Bearer " + authToken);
 
-        String body;
         int statusCode;
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             statusCode = response.getStatusLine().getStatusCode();
-            body = EntityUtils.toString(response.getEntity());
         } catch (Exception e) {
             throw new ConnectionException("error talking to interactives api", e);
         }
@@ -58,9 +56,9 @@ public class InteractivesAPIClient implements Client {
             case HttpStatus.SC_FORBIDDEN:
                 throw new UnauthorizedException("You are not authorized to delete interactives");
             case HttpStatus.SC_INTERNAL_SERVER_ERROR:
-                throw new ServerErrorException("Server error returned from interactives api: " + body);
+                throw new ServerErrorException("Internal server error returned from interactives api");
             default:
-                throw new UnexpectedResponseException("Unexpected error from interactives api: " + body);
+                throw new UnexpectedResponseException("Unexpected error from interactives api");
         }
     }
 

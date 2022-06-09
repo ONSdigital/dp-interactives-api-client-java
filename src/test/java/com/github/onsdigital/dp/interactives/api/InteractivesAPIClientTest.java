@@ -151,7 +151,7 @@ class InteractivesAPIClientTest {
     void handingInvalidHostnameProvided() {
         InteractivesAPIClient client = new InteractivesAPIClient("NOT A VALID HOSTNAME", TOKEN);
 
-        Exception e = assertThrows(ConnectionException.class, () -> {
+        Exception e = assertThrows(IllegalArgumentException.class, () -> {
             client.publishCollection(COLLECTION_ID);
         });
 
