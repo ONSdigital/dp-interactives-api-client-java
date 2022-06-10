@@ -49,7 +49,7 @@ public class InteractivesAPIClient implements Client {
         }
 
         switch (statusCode) {
-            case HttpStatus.SC_OK:
+            case HttpStatus.SC_NO_CONTENT:
                 return; //all good
             case HttpStatus.SC_NOT_FOUND:
                 throw new NoInteractivesInCollectionException("No interactives found with id: " + interactiveId);
