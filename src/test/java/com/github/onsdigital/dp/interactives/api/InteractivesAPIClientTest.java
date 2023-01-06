@@ -53,7 +53,7 @@ class InteractivesAPIClientTest {
     }
 
     @Test
-    void attemptingToPublishACollectionWithNoInteractives() {
+    void attemptingToPublishACollectionWithNoInteractives() throws Exception {
         try (MockWebServer server = new MockWebServer()) {
             server.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_NOT_FOUND));
 
@@ -64,14 +64,11 @@ class InteractivesAPIClientTest {
             assertThrows(NoInteractivesInCollectionException.class, () -> {
                 client.publishCollection(COLLECTION_ID);
             });
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
     @Test
-    void attemptingToPublishACollectionWithAFileThatIsNotInUploadedState() {
+    void attemptingToPublishACollectionWithAFileThatIsNotInUploadedState() throws Exception {
         try (MockWebServer server = new MockWebServer()) {
             server.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_CONFLICT));
 
@@ -82,14 +79,11 @@ class InteractivesAPIClientTest {
             assertThrows(InteractiveInvalidStateException.class, () -> {
                 client.publishCollection(COLLECTION_ID);
             });
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
     @Test
-    void handingAuthorizationFailure() {
+    void handingAuthorizationFailure() throws Exception {
         try (MockWebServer server = new MockWebServer()) {
             server.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_FORBIDDEN));
 
@@ -100,14 +94,11 @@ class InteractivesAPIClientTest {
             assertThrows(UnauthorizedException.class, () -> {
                 client.publishCollection(COLLECTION_ID);
             });
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
     @Test
-    void handlingServerFailure() {
+    void handlingServerFailure() throws Exception {
         String errBody = "the interactives server is broken";
         try (MockWebServer server = new MockWebServer()) {
             server.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_INTERNAL_SERVER_ERROR).setBody(new Buffer().writeUtf8(errBody)));
@@ -121,14 +112,11 @@ class InteractivesAPIClientTest {
             });
 
             assertTrue(e.getMessage().contains(errBody));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
     @Test
-    void handlingUnexpectedError() {
+    void handlingUnexpectedError() throws Exception {
         String responseBody = "its always tea time";
         try (MockWebServer server = new MockWebServer()) {
             server.enqueue(new MockResponse().setResponseCode(418).setBody(new Buffer().writeUtf8(responseBody)));
@@ -142,9 +130,6 @@ class InteractivesAPIClientTest {
             });
 
             assertTrue(e.getMessage().contains(responseBody));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
@@ -171,7 +156,7 @@ class InteractivesAPIClientTest {
     }
 
     @Test
-    void deleteInteractiveHandingAuthorizationFailure() {
+    void deleteInteractiveHandingAuthorizationFailure() throws Exception {
         try (MockWebServer server = new MockWebServer()) {
             server.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_UNAUTHORIZED));
 
@@ -182,27 +167,19 @@ class InteractivesAPIClientTest {
             assertThrows(UnauthorizedException.class, () -> {
                 client.deleteInteractive(INTERACTIVE_ID);
             });
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
     @Test
-    void deleteInteractiveHandingForbiddenResponse() {
+    void deleteInteractiveHandingForbiddenResponse() throws Exception  {
         try (MockWebServer server = new MockWebServer()) {
             server.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_FORBIDDEN));
-
             HttpUrl url = server.url("");
-
             InteractivesAPIClient client = new InteractivesAPIClient(url.toString(), TOKEN);
 
             assertThrows(ForbiddenException.class, () -> {
                 client.deleteInteractive(INTERACTIVE_ID);
             });
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 }
