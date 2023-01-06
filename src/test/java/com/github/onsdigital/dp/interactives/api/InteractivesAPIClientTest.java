@@ -1,6 +1,7 @@
 package com.github.onsdigital.dp.interactives.api;
 
 import com.github.onsdigital.dp.interactives.api.exceptions.ConnectionException;
+import com.github.onsdigital.dp.interactives.api.exceptions.ForbiddenException;
 import com.github.onsdigital.dp.interactives.api.exceptions.InteractiveInvalidStateException;
 import com.github.onsdigital.dp.interactives.api.exceptions.NoInteractivesInCollectionException;
 import com.github.onsdigital.dp.interactives.api.exceptions.ServerErrorException;
@@ -167,5 +168,41 @@ class InteractivesAPIClientTest {
         });
 
         assertNotNull(e.getCause());
+    }
+
+    @Test
+    void deleteInteractiveHandingAuthorizationFailure() {
+        try (MockWebServer server = new MockWebServer()) {
+            server.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_UNAUTHORIZED));
+
+            HttpUrl url = server.url("");
+
+            InteractivesAPIClient client = new InteractivesAPIClient(url.toString(), TOKEN);
+
+            assertThrows(UnauthorizedException.class, () -> {
+                client.deleteInteractive(INTERACTIVE_ID);
+            });
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void deleteInteractiveHandingForbiddenResponse() {
+        try (MockWebServer server = new MockWebServer()) {
+            server.enqueue(new MockResponse().setResponseCode(HttpStatus.SC_FORBIDDEN));
+
+            HttpUrl url = server.url("");
+
+            InteractivesAPIClient client = new InteractivesAPIClient(url.toString(), TOKEN);
+
+            assertThrows(ForbiddenException.class, () -> {
+                client.deleteInteractive(INTERACTIVE_ID);
+            });
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }
