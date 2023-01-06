@@ -54,6 +54,8 @@ public class InteractivesAPIClient implements Client {
             case HttpStatus.SC_NOT_FOUND:
                 throw new NoInteractivesInCollectionException("No interactives found with id: " + interactiveId);
             case HttpStatus.SC_FORBIDDEN:
+                throw new ForbiddenException("Interactive deletion is forbidden (is published)");
+            case HttpStatus.SC_UNAUTHORIZED:
                 throw new UnauthorizedException("You are not authorized to delete interactives");
             case HttpStatus.SC_INTERNAL_SERVER_ERROR:
                 throw new ServerErrorException("Internal server error returned from interactives api");
